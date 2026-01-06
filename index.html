@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kamus Bahasa Batak Toba | Gorga Nusantara</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Cinzel:wght@700&display=swap" rel="stylesheet">
+  <style>
+:root {
+    --batak-red: #8B0000;
+    --batak-dark: #2C1810;
+    --batak-gold: #D4A017;
+    --batak-cream: #FDF6E3;
+    --batak-purple: #4A148C;
+  }
+  
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(to bottom, #f9f3e8, #fdf6e3);
+    color: #2C1810;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+  
+  /* GORGA BACKGROUND */
+  .gorga-bg {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120"><path fill="%23D4A017" opacity="0.08" d="M60 10 L70 30 L90 30 L75 45 L85 65 L60 50 L35 65 L45 45 L30 30 L50 30 Z"/><path fill="%23D4A017" opacity="0.08" d="M20 50 L30 70 L50 70 L35 85 L45 105 L20 90 L0 105 L10 85 L0 70 L15 70 Z" transform="translate(80,0)"/></svg>') repeat;
+    pointer-events: none;
+    z-index: -1;
+  }
+  
+  header {
+    background: linear-gradient(135deg, var(--batak-red), var(--batak-purple));
+    color: white;
+    text-align: center;
+    padding: 3rem 1rem;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 8px 20px rgba(139, 0, 0, 0.3);
+  }
+  
+  header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60"><path fill="none" stroke="%23D4A017" stroke-width="3" opacity="0.3" d="M0,30 Q50,10 100,30 T200,30"/></svg>') center/100% 100% no-repeat;
+    pointer-events: none;
+  }
+  
+  header h1 {
+    font-family: 'Cinzel', serif;
+    font-size: 2.8rem;
+    margin-bottom: 0.5rem;
+    text-shadow: 0 3px 6px rgba(0,0,0,0.4);
+  }
+  
+  header p {
+    font-size: 1.1rem;
+    opacity: 0.95;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  
+  .container {
+    max-width: 1100px;
+    margin: 3rem auto;
+    padding: 0 1.5rem;
+  }
+  
+  /* CARD BAHASA */
+  .language-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    margin: 2rem 0;
+  }
+  
+  .lang-card {
+    background: white;
+    border-radius: 20px;
+    padding: 2.5rem 2rem;
+    text-align: center;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    overflow: hidden;
+    border: 3px solid transparent;
+  }
+  
+  .lang-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 8px;
+    background: linear-gradient(90deg, var(--batak-gold), var(--batak-red), var(--batak-gold));
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  
+  .lang-card:hover::before { opacity: 1; }
+  .lang-card:hover {
+    transform: translateY(-12px) scale(1.03);
+    box-shadow: 0 20px 40px rgba(139, 0, 0, 0.2);
+    border-color: var(--batak-gold);
+  }
+  
+  .lang-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 1rem;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+  }
+  
+  .lang-card h2 {
+    font-family: 'Cinzel', serif;
+    color: var(--batak-red);
+    margin: 0.8rem 0;
+    font-size: 1.6rem;
+  }
+  
+  .lang-card p {
+    color: #555;
+    font-size: 0.95rem;
+  }
+  
+  /* DICTIONARY PAGE */
+  .dictionary-page {
+    display: none;
+    background: white;
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+  }
+  
+  .back-btn {
+    background: var(--batak-dark);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.95rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s;
+    margin-bottom: 1.5rem;
+  }
+  
+  .back-btn:hover {
+    background: #000;
+    transform: translateX(-5px);
+  }
+  
+  .search-box {
+    width: 100%;
+    padding: 1rem 1.2rem;
+    border: 2px solid #ddd;
+    border-radius: 16px;
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+    transition: all 0.3s;
+    background: #fdf6e3;
+  }
+  
+  .search-box:focus {
+    outline: none;
+    border-color: var(--batak-red);
+    box-shadow: 0 0 0 4px rgba(139, 0, 0, 0.15);
+    background: white;
+  }
+  
+  .alphabet-filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-bottom: 1.8rem;
+    justify-content: center;
+    padding: 0.5rem;
+    background: #f8f0e0;
+    border-radius: 16px;
+  }
+  
+  .alpha-btn {
+    padding: 0.6rem 1rem;
+    border: 2px solid var(--batak-red);
+    background: transparent;
+    color: var(--batak-red);
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  
+  .alpha-btn.active,
+  .alpha-btn:hover {
+    background: var(--batak-red);
+    color: white;
+    transform: scale(1.05);
+  }
+  
+  .word-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1.2rem;
+  }
+  
+  .word-card {
+    background: linear-gradient(135deg, #fff, #fdf6e3);
+    border-radius: 16px;
+    padding: 1.4rem;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+    border-left: 4px solid var(--batak-gold);
+  }
+  
+  .word-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+    border-left-color: var(--batak-red);
+  }
+  
+  .word-batak {
+    color: var(--batak-red);
+    font-weight: 700;
+    font-size: 1.2rem;
+    margin-bottom: 0.3rem;
+  }
+  
+  .word-meaning {
+    font-weight: 600;
+    color: var(--batak-dark);
+    margin-bottom: 0.3rem;
+    font-size: 1rem;
+  }
+  
+  .word-type {
+    font-size: 0.85rem;
+    color: #666;
+    font-style: italic;
+    line-height: 1.4;
+  }
+  
+  .no-words {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 3rem;
+    color: #888;
+    font-style: italic;
+    background: #fdf6e3;
+    border-radius: 16px;
+    border: 2px dashed #ccc;
+  }
+  
+  .search-result {
+    background: linear-gradient(135deg, #fff8e1, #fdf6e3);
+    border-left: 5px solid var(--batak-gold);
+    padding: 1.2rem;
+    margin-bottom: 1.5rem;
+    border-radius: 0 12px 12px 0;
+    font-size: 1.15rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+  
+  footer {
+    text-align: center;
+    padding: 3rem 1rem;
+    background: var(--batak-dark);
+    color: #ccc;
+    font-size: 0.95rem;
+    margin-top: 4rem;
+  }
+  
+  @media (max-width: 768px) {
+    header h1 { font-size: 2.2rem; }
+    .language-grid { grid-template-columns: 1fr; }
+    .word-grid { grid-template-columns: 1fr; }
+    .word-batak { font-size: 1.1rem; }
+  }
+  </style>
+</head>
+<body>
+
+  <div class="gorga-bg"></div>
+
+  <header>
+    <h1>Kamus Bahasa Batak Toba</h1>
+    <p>Warisan budaya dalam genggaman — Toba</p>
+  </header>
+
+  <div class="container">
+
+    <!-- PILIHAN BAHASA -->
+    <section id="languageSelection">
+      <div class="language-grid">
+        <div class="lang-card" onclick="showDictionary('toba')">
+          <svg class="lang-icon" viewBox="0 0 100 100" fill="none" stroke="#8B0000" stroke-width="3">
+            <path d="M50 15 L60 35 L80 35 L65 50 L75 70 L50 55 L25 70 L35 50 L20 35 L40 35 Z"/>
+            <circle cx="50" cy="45" r="8" fill="#D4A017"/>
+          </svg>
+          <h2>Batak Toba</h2>
+          <p>Kamus Indonesia → Batak Toba</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- KAMUS TOBA -->
+    <section id="dictionaryToba" class="dictionary-page">
+      <button class="back-btn" onclick="goBack()">Back</button>
+      <h2 style="text-align:center; margin:1.5rem 0; color:var(--batak-red); font-family:'Cinzel',serif;">
+        Kamus Batak Toba
+      </h2>
+      <input type="text" class="search-box" id="searchToba" placeholder="Cari kata dalam Bahasa Indonesia..." onkeyup="searchWord('toba')">
+      <div id="searchResultToba"></div>
+      <div class="alphabet-filter" id="alphaToba"></div>
+      <div class="word-grid" id="wordListToba"></div>
+    </section>
+
+  </div>
+
+  <footer>
+    <p>© 2025 <strong>Kamus Bahasa Batak Toba</strong> | Melestarikan Warisan Budaya Nusantara</p>
+    <p>Dibuat dengan cinta <span style="color:#e74c3c;">Love</span> untuk generasi Batak</p>
+  </footer>
+
+  <!-- Load Data & Script -->
+  <script>
+const dictionaries = {
+  toba: {
+    // === HURUF A ===
+    "aha": "apa : Kata tanya atau interogatif",
+  "among": "ayah / bapak : Kata benda (nomina) karena menunjukkan orang",
+  "anakkon": "anakku : Kata benda (nomina) karena menamai seseorang (anak)",
+  "alai": "tetapi : Kata penghubung / konjungsi, karena menghubungkan dua klausa yang berlawanan",
+  "asa": "supaya / agar : Kata penghubung / konjungsi, karena menyatakan tujuan",
+  "akka": "para / sekelompok : Kata benda, karena menunjukkan kumpulan orang", 
+  "ate": "hati : Kata benda, karena menamai bagian tubuh / perasaan",
+  "aha dohot i": "apa dan itu : Kata tanya + penunjuk, bukan benda/kerja/sifat", 
+  "amanta": "ayah kita / bapak : Kata benda, karena menunjukkan orang (ayah)", 
+  "asing": "orang lain : Kata benda, karena menunjuk orang",  
+  "ate-ate": "lembut hati : Kata sifat (adjektiva), karena menggambarkan watak atau sifat seseorang", 
+  "adong": "ada : Kata kerja (verba) karena menyatakan keberadaan atau ekstensi",
+  "andung": "ratapan / tangisan : Kata benda (nomina) karena menamai hasil perbuatan (ratapan)",
+  "andulau": "luar / sebelah luar : Kata sifat, karena menggambarkan letak atau keadaan sesuatu (di luar)", 
+  "aha do pangalaho": "apa pekerjaanmu : Frasa tanya (bukan kata tunggal) – pangalaho di sini sebenarnya kata benda berarti “pekerjaan”", 
+  "ampuna": "maafkan (bentuk permohonan maaf) : Kata kerja (verba), karena menyatakan tindakan memaafkan", 
+  "ari": "hari : Kata benda (nomina), karena menunjukkan waktu",
+  "apala": "mengapa / kenapa : Kata tanya (interogatif), bukan benda/kerja/sifat", 
+  "anggi": "adik : Kata benda (nomina), karena menyatakan orang",
+  "amana": "ayahnya : Kata benda, bentuk kepemilikan dari amang", 
+  "aek": "air : Kata benda (nomina), karena menyatakan benda",
+  "asar": "sarang : Kata benda (nomina), karena menyatakan tempat",
+  "alusi": "berbicara : Kata kerja (verba), karena menyatakan kegiatan berbicara",
+  "abara": "bahu / pundak : Kata benda (nomina), karena menyatakan bagian tubuh", 
+  "angkang": "kakak : Kata benda (nomina), karena menyatakan orang", 
+  "abit": "kain / pakaian : Kata benda (nomina), karena menyatakan benda", 
+  "ambar": "kolam air : Kata benda (nomina), karena menyatakan tempat", 
+  "ahu": "aku : Kata ganti / pronomina, karena menggantikan orang pertama", 
+  "alogo": "angin : Kata benda (nomina), karena menyatakan benda alam", 
+  "alani": "karena : Kata penghubung / konjungsi, karena menyatakan sebab", 
+  "arar": "galah : Kata benda (nomina), karena menyatakan alat",
+  "ala": "bahwa : Kata penghubung / konjungsi, karena memperkenalkan isi pernyataan", 
+  "alap": "jemput / mengambil : Kata kerja (verba), karena menyatakan tindakan",
+    // === HURUF B ===
+"biang": "anjing : Kata benda (nomina), karena menyatakan nama hewan", 
+  "bodat": "monyet : Kata benda (nomina), karena menyatakan nama hewan", 
+  "birong": "hitam : Kata sifat (adjektiva), karena menyatakan warna", 
+  "burju": "baik : Kata sifat (adjektiva), karena menyatakan sifat atau keadaan", 
+  "bagak": "cantik : Kata sifat (adjektiva), karena menyatakan sifat fisik", 
+  "boha": "bagaimana : Kata tanya / interogativa", 
+  "bottar": "putih : Kata sifat (adjektiva), karena menyatakan warna", 
+  "bohi": "wajah : Kata benda (nomina), karena menyatakan bagian tubuh", 
+  "butet": "anak perempuan : Kata benda (nomina), karena menyatakan orang", 
+  "botik": "pepaya : Kata benda (nomina), karena menyatakan buah", 
+  "bolak": "luas / lebar : Kata sifat (adjektiva), karena menyatakan ukuran", 
+  "borning": "malam : Kata benda (nomina), karena menyatakan waktu",
+  "boasa": "mengapa : Kata tanya / interogativa, karena digunakan untuk menanyakan sebab", 
+  "bereng": "lihat : Kata kerja (verba), karena menyatakan tindakan melihat", 
+  "boras": "beras : Kata benda (nomina), karena menyatakan benda", 
+  "bou": "saudara perempuan bapak : Kata benda (nomina), karena menyatakan hubungan kekerabatan", 
+  "betta": "ayo : Kata seru / interjeksi, karena digunakan sebagai ajakan", 
+  "bege": "dengar / mendengarkan : Kata kerja (verba), karena menyatakan aktivitas indra pendengaran", 
+  "baba": "mulut : Kata benda (nomina), karena menyatakan bagian tubuh", 
+  "boru": "perempuan : Kata benda (nomina), karena menyatakan jenis kelamin/orang", 
+  "bulung": "daun : Kata benda (nomina) karena menamai bagian tumbuhan",
+  "bahen": "membuat : Kata kerja (verba), karena menyatakan tindakan", 
+  "bondar": "kali (sungai kecil) : Kata benda (nomina), karena menyatakan tempat alam", 
+  "battal": "bantal : Kata benda (nomina), karena menyatakan benda", 
+  "baskom": "baskom : Kata benda (nomina), karena menyatakan benda", 
+// === HURUF C ===
+// "cincang": "potong kecil-kecil : Kata kerja (verba) karena menunjukkan tindakan memotong sesuatu menjadi bagian kecil",
+// "ceritahon": "ceritakan : Kata kerja (verba) karena menyatakan tindakan menceritakan sesuatu (bentuk perintah atau ajakan)",
+// "cintahon": "mencintai / menyayangi : Kata kerja (verba) karena menyatakan tindakan menaruh kasih sayang",
+// "cinta ni roha": "kasih dari hati / cinta tulus : Kata benda (abstrak) karena menamai perasaan batin",
+// "cintani": "kekasih / orang yang dicintai : Kata benda (nomina) karena menamai seseorang",
+
+// === HURUF D ===
+"dainang": "ibu : Kata benda (nomina), karena menyatakan orang",
+"dalan": "jalan : Kata benda (nomina) karena menamai tempat atau lintasan untuk berjalan",
+"dalanna": "jalannya : Kata benda (nomina kepemilikan) karena menunjukkan kepemilikan dari 'jalan'",
+"dapot": "dapat / memperoleh : Kata kerja (verba), karena menyatakan tindakan memperoleh",
+"dapotan": "hasil / perolehan : Kata benda (nomina) karena menamai hasil dari tindakan dapot",
+"denggan": "baik : Kata sifat (adjektiva), karena menyatakan sifat atau keadaan",
+"dang": "tidak / bukan : Kata tugas (negatif), bukan benda, kerja, atau sifat",
+"dibagas": "di dalam : Kata keterangan tempat (adverbia), tidak termasuk benda/kerja/sifat",
+"diadop": "diambil / didapat : Kata kerja pasif (verba) karena menunjukkan hasil tindakan mengambil",
+"dihita": "di kita / milik kita : Kata benda (pronomina kepemilikan) karena menamai kepemilikan",
+"dijolo": "di depan / sebelumnya : Kata keterangan waktu/tempat (adverbia), bukan benda/kerja/sifat",
+"dolok": "gunung / bukit : Kata benda (nomina), karena menyatakan tempat alam",
+"dongan tubu": "saudara sekandung : Kata benda (frasa kekerabatan) karena menamai hubungan keluarga",
+"dongan sahuta": "teman sekampung : Kata benda (frasa nomina) karena menamai hubungan sosial",
+"dung": "sesudah / setelah : Kata keterangan waktu (adverbia)",
+"dung marujung": "setelah selesai / sesudah berakhir : Frasa keterangan waktu (adverbia)",
+"dungi": "lalu / kemudian : Kata keterangan waktu (adverbia)",
+"dungkon au": "sesudah saya : Frasa keterangan waktu + pronomina",
+"dalan ni roha": "jalan hati / niat hati : Kata benda (abstrak) karena menamai kehendak batin seseorang",
+"dosa": "kesalahan / pelanggaran : Kata benda (nomina) karena menamai konsep moral",
+"dame": "damai : Kata sifat (adjektiva), karena menyatakan keadaan", // ditambahkan
+  "didia": "di mana : Kata tanya / interogativa", // ditambahkan
+  "dalanan": "jalan : Kata benda (nomina), karena menyatakan tempat atau sarana lewat", // ditambahkan
+  "dage": "keterangan : Kata keterangan / adverbia, karena menambahkan keterangan", // ditambahkan
+  "dohot": "dengan / dan : Kata penghubung / konjungsi", // ditambahkan
+  "dongan": "teman : Kata benda (nomina), karena menyatakan orang", // ditambahkan
+"disi": "di situ : Kata keterangan / adverbia, karena menyatakan tempat", // ditambahkan
+  "deba": "sebelah / sisi : Kata benda (nomina), karena menyatakan bagian atau sisi", // ditambahkan
+"debata": "Tuhan : Kata benda (nomina), karena menyatakan nama Tuhan", // ditambahkan
+"domu": "berkumpul / rapat : Kata kerja (verba), karena menyatakan tindakan berkumpul", // ditambahkan
+  "dalihan": "tungku : Kata benda (nomina), karena menyatakan benda", // ditambahkan
+  "daong": "jangan : Kata kerja (verba), karena menyatakan aktivitas indra", // ditambahkan (mungkin typo doc, konteks tidak jelas)
+  "dungkon": "setelah : Kata kerja (verba), karena menyatakan posisi atau perbuatan", // ditambahkan
+// === HURUF E ===
+"eme": "padi : Kata benda (nomina), karena menyatakan tumbuhan atau bahan pangan",
+"esaon": "menyatukan / mempersatukan : Kata kerja (verba) karena menyatakan tindakan menyatukan sesuatu",
+"emehon": "menanam padi : Kata kerja (verba) karena menyatakan tindakan pertanian",
+"elek ni roha": "kelembutan hati / sifat penyayang : Kata sifat (adjektiva) karena menggambarkan karakter seseorang",
+"elek ni rohana": "kelembutan hatinya : Kata sifat (adjektiva) karena menggambarkan sifat seseorang",
+"esa ni bangsa": "persatuan bangsa : Kata benda (abstrak nasional) karena menamai konsep kesatuan masyarakat",
+"elek do hita tu halak": "kita bersikap lembut kepada orang lain : Kalimat dengan inti kata sifat (elek) karena menggambarkan sikap batin yang lembut",
+"elek tu anak": "kasih sayang terhadap anak : Kata benda (abstrak perasaan) karena menamai bentuk kasih",
+"elek ma hita": "marilah kita saling lembut hati : Kalimat seruan dengan inti kata sifat (elek)",
+"esa do na mangalah": "hanya satu yang menang : Kalimat nominal dengan inti kata benda (esa)",
+"esa ni sihol": "kesatuan rasa rindu : Kata benda (abstrak) karena menamai konsep batin",
+"eme ni roha ni tuhan": "berkat dari kasih Tuhan : Kata benda (abstrak religius)",
+"eme ni pangalaho": "hasil pekerjaan / pendapatan : Kata benda (abstrak ekonomi)",
+"elek ma roham": "lembutkanlah hatimu : Kata kerja (verba perintah) berasal dari elek (lembut), bermakna 'bersikaplah lembut hati'",
+"eme ni pargogo": "rezeki pemimpin / hasil kerja pemimpin : Kata benda (abstrak adat) karena menamai hasil atau berkah dari kepemimpinan",
+"elek tu angka dongan": "kasih kepada para teman : Kata benda (abstrak sosial) karena menamai hubungan emosional antar sahabat",
+"elek tu parumaen": "kasih kepada menantu : Kata benda (abstrak adat) karena menamai kasih sosial dalam relasi kekeluargaan",
+"elek marbunga": "kelembutan yang menghasilkan keindahan / kasih yang membawa kebahagiaan : Kata sifat (puitis) karena menggambarkan karakter kasih yang indah",
+"elek ni roha ni jolma": "kelembutan hati manusia : Kata sifat (universal) karena menggambarkan sifat dasar manusia",
+"elek ni paranak": "kelembutan pihak laki-laki terhadap pihak istri : Kata sifat (adat sosial)",
+"etong": "hitung : Kata kerja (verba), karena menyatakan tindakan menghitung", 
+  "eda": "kakak ipar : Kata benda (nomina), karena menyatakan hubungan kekerabatan",
+// === HURUF F ===
+"fajar": "cahaya pagi / awal terang : Kata benda (nomina) karena menamai waktu hari",
+"fasido ni roha ni halak": "kebahagiaan hati manusia : Kata benda (abstrak)",
+"fadani": "bantuan / dukungan : Kata benda (nomina) karena menamai pertolongan",
+"fangolhon": "melemahkan / membuat lembut : Kata kerja (verba) karena menunjukkan tindakan membuat hal menjadi lembut",
+"fasih ibana marbahasa batak": "lancar dia berbicara bahasa batak / pandai bicara : Kata sifat (adjektiva) karena menggambarkan kemampuan seseorang dalam berbicara",
+"fangol": "lemah lembut / sabar : Kata sifat (adjektiva) karena menggambarkan karakter seseorang",
+
+// === HURUF G ===
+"ganjang": "panjang : Kata sifat (adjektiva) karena menggambarkan ukuran atau jarak sesuatu",
+"gabe": "makmur / sejahtera / banyak keturunan : Kata sifat (adjektiva) karena menunjukkan keadaan yang baik dan diberkati",
+"gok": "kuat / kokoh : Kata sifat (adjektiva) karena menunjukkan kekuatan fisik",
+"gokhon": "memperkuat / menguatkan : Kata kerja (verba) karena menyatakan tindakan membuat sesuatu menjadi kuat",
+"gombarhon": "menggambar / melukis : Kata kerja (verba) karena menyatakan tindakan",
+"godang": "besar / banyak / agung : Kata sifat (adjektiva) karena menggambarkan ukuran, jumlah, atau kehormatan",
+"golap": "gelap / tidak ada cahaya : Kata sifat (adjektiva) karena menggambarkan keadaan",
+"gotilon": "tertawa kecil / senyum lemah : Kata kerja ringan (verba) karena menyatakan tindakan",
+"gok ni roha": "kekuatan hati / semangat batin : Kata benda (abstrak) karena menamai keadaan batin",
+"gokhon roha": "menguatkan hati / memberi semangat : Kata kerja (verba) karena menyatakan tindakan",
+"ganjang ni umur": "umur panjang : Kata benda (abstrak) karena menamai durasi hidup",
+"gok ma rohamu": "kuatkanlah hatimu : Kalimat perintah dengan inti kata kerja (verba)",
+"gokhon hata": "meneguhkan perkataan / berkata dengan tegas : Kata kerja (verba) karena menyatakan tindakan",
+"gok ni debata": "kekuatan Tuhan : Kata benda (abstrak religius) karena menamai sifat ilahi",
+"gok ni boru": "kekuatan pihak boru (penerima istri) : Kata benda (sosial-adat) karena menamai peran dalam adat",
+"gabe ma hita": "semogalah kita makmur : Kalimat doa dengan inti kata sifat 'gabe'",
+"gabe ni halak": "kemakmuran orang / kesejahteraan masyarakat : Kata benda (abstrak sosial)",
+"gabe ni roha": "kedamaian hati / kelapangan batin : Kata benda (abstrak emosional)",
+"gabeon": "menjadikan makmur / memakmurkan : Kata kerja (verba) karena menyatakan tindakan membuat sejahtera",
+"ganjang ni hata": "kata yang panjang / banyak bicara : Kata benda (abstrak) karena menamai sifat ucapan",
+"ganjang ni roha": "kelegaan hati / luas hati : Kata benda (abstrak emosional)",
+"gambiri ni tano": "akar tanah / ikatan bumi : Kata benda (konkret) karena menamai bagian tumbuhan atau konsep adat",
+"gabe na uli": "hidup sejahtera dan baik : Kata sifat (adjektiva kompleks) karena menggambarkan keadaan hidup",
+"gararhon roha": "mengguncang hati / menimbulkan rasa sedih atau rindu : Kata kerja (verba) karena menyatakan tindakan emosional",
+"gok ni huta": "kekuatan desa / kemakmuran kampung : Kata benda (sosial) karena menamai keadaan komunitas",
+
+// === HURUF H ===
+"halak": "orang : Kata benda (nomina), karena menyatakan manusia",
+"hita": "kita / kita semua : Kata ganti orang (pronomina) inklusif",
+"hamu": "kalian / kamu sekalian : Kata ganti orang (pronomina) jamak",
+"hami": "kami (tidak termasuk lawan bicara) : Kata ganti orang (pronomina) eksklusif",
+"holan": "hanya / cuma : Kata tugas (partikel pembatas)",
+"hata": "kata / bahasa / perkataan : Kata benda (nomina), karena menyatakan sistem bahasa",
+"hatani": "bahasanya / katanya : Kata benda (nomina kepemilikan)",
+"hatoban": "penutur / orang yang berbicara : Kata benda (nomina pelaku)",
+"hatahon": "berkata / berbicara : Kata kerja (verba) karena menyatakan tindakan berbicara",
+"hasangapon": "kemuliaan / kehormatan : Kata benda (nomina abstrak)",
+"hasangaphon": "memuliakan / menghormati : Kata kerja (verba) karena menyatakan tindakan",
+"hagabeon": "kemakmuran / banyak keturunan / kesejahteraan : Kata benda (nomina sosial-adat)",
+"haporluon": "kebutuhan / keperluan : Kata benda (nomina abstrak)",
+"haringgahon": "memberi semangat / mengobarkan semangat : Kata kerja (verba) karena menyatakan tindakan",
+"hapogoshon": "mengeraskan / meneguhkan : Kata kerja (verba) karena menyatakan tindakan",
+"haporseaon": "kepercayaan / iman : Kata benda (nomina religius)",
+"hasian": "kekasih / sayang / cinta : Kata benda (nomina afektif)",
+"hajolmaon": "kemanusiaan / sifat manusiawi : Kata benda (nomina abstrak)",
+"haporsea ni tondi": "kepercayaan roh / iman batin : Kata benda (nomina spiritual)",
+"habur": "cepat : Kata sifat (adjektiva), karena menyatakan keadaan atau cara melakukan suatu perbuatan", // ditambahkan
+  "horas": "selamat : Kata benda (nomina), digunakan sebagai ungkapan salam atau doa", // ditambahkan
+  "huar": "gali tanah : Kata kerja (verba), karena menyatakan tindakan menggali", // ditambahkan
+  "hodar": "jelek kelakuan : Kata sifat (adjektiva), karena menggambarkan sifat atau perilaku seseorang", // ditambahkan
+  "haruar": "keluar : Kata kerja (verba), karena menyatakan perbuatan berpindah dari dalam ke luar", // ditambahkan (juga "haluar")
+  "hombar": "tetangga / orang terdekat : Kata benda (nomina), karena menyatakan orang", // ditambahkan
+  "hansar": "mencret / diare : Kata kerja (verba), karena menyatakan proses atau keadaan tubuh", // ditambahkan
+  "hangar": "kelaparan / kurang pangan : Kata sifat (adjektiva), karena menyatakan keadaan", // ditambahkan (juga "hingar")
+  "holong": "cinta, kasih : Kata benda abstrak (nomina), karena menyatakan perasaan", // ditambahkan
+  "hepeng": "uang : Kata benda (nomina), karena menyatakan benda", // ditambahkan
+  "hekkel": "tertawa : Kata kerja (verba), karena menyatakan tindakan", // ditambahkan
+  "holit": "pelit, kikir : Kata sifat (adjektiva), karena menyatakan watak atau sifat", // ditambahkan
+  "hudali": "pacul / cangkul : Kata benda (nomina), karena menyatakan alat", // ditambahkan
+  "hubil": "menguliti : Kata kerja (verba), karena menyatakan tindakan", // ditambahkan
+  "huta": "kampung / desa : Kata benda (nomina), karena menyatakan tempat", // ditambahkan
+  "husap": "sapu : Kata benda (nomina), karena menyatakan alat", // ditambahkan
+  "hagogoon": "kekuatan : Kata benda abstrak (nomina), karena menyatakan konsep", // ditambahkan
+  "hauma": "sawah : Kata benda (nomina), karena menyatakan tempat atau lahan", // ditambahkan
+  "hudon": "periuk : Kata benda (nomina), karena menyatakan benda", // ditambahkan
+  "horung": "kalung : Kata benda (nomina), karena menyatakan benda", // ditambahkan
+  "harotas": "kertas : Kata benda (nomina), karena menyatakan benda", // ditambahkan
+  "holsoan": "mengeluh : Kata kerja (verba), karena menyatakan tindakan menyatakan rasa", // ditambahkan
+  "habang": "terbang : Kata kerja (verba), karena menyatakan gerakan", // ditambahkan
+// === HURUF I ===
+"inang": "ibu (panggilan hormat) : Kata benda (nomina relasional) karena bentuk halus dari ina",
+"ise": "siapa : Kata tanya (interogatif) bukan benda, kerja, atau sifat",
+"ido": "lihat / menengok : Kata kerja (verba) karena menyatakan tindakan melihat",
+"idup": "hidup / kehidupan : Kata benda (nomina abstrak) karena menamai konsep eksistensi",
+"itak": "nasi / beras matang : Kata benda (nomina konkret) karena menamai makanan pokok",
+"ihon": "ikan : Kata benda (nomina konkret) karena menamai hewan",
+"isanghon": "meringankan / membuat ringan : Kata kerja (verba) karena menyatakan tindakan",
+"ihur": "pantat : Kata benda (nomina konkret) karena menamai bagian tubuh",
+"ingung": "hidung : Kata benda (nomina konkret) karena menamai bagian tubuh",
+"imana": "dia (kepunyaan dia) : Kata benda (nomina kepemilikan) atau pronomina posesif",
+"iba": "saya : Kata ganti orang (pronomina) bentuk intim atau dialek",
+"ingot": "ingat : Kata kerja (verba) karena menyatakan tindakan mengingat",
+"isor": "rendah : Kata sifat (adjektiva) karena menggambarkan tinggi atau status",
+"inum": "minum : Kata kerja (verba) karena menyatakan tindakan",
+"iluk": "air mata : Kata benda (nomina konkret) karena menamai cairan tubuh",
+"ilo": "malas : Kata sifat (adjektiva) karena menggambarkan sifat seseorang",
+"ipi": "mimpi : Kata benda (nomina abstrak) karena menamai pengalaman tidur",
+"idop": "kacang : Kata benda (nomina konkret) karena menamai tanaman atau biji",
+"ipon": "gigi : Kata benda (nomina konkret) karena menamai bagian tubuh",
+"ito": "saudara laki-laki : Kata benda (nomina kekerabatan) karena menamai hubungan keluarga",
+"iboto": "saudara kandung (laki/perempuan) : Kata benda (nomina kekerabatan) karena menamai saudara seibu/sebapa",
+"imbaru": "baru : Kata sifat (adjektiva) karena menggambarkan keadaan waktu atau kondisi",
+"ilu ni aek": "air yang penuh / wadah berisi air : Kata benda (nomina konkret) karena menamai isi wadah",
+
+
+// === HURUF J ===
+"jabu": "rumah : Kata benda (nomina), karena menyatakan tempat tinggal",
+"jolma": "manusia : Kata benda (nomina), karena menyatakan orang",
+"juma": "Ladang/ kebun : Kata benda( nomina)",
+"jonjong": "berdiri : Kata kerja (verba aktif) Menunjukkan tindakan atau keadaan posisi tubuh yang tegak",
+"jei": "jadi, menjadi : Kata kerja (verba intransitif) Menyatakan perubahan keadaan atau hasil (contoh: jadi jolma denggan = menjadi orang baik)",
+"jagar": "kuat, gagah : Kata sifat (adjektiva fisik) Menggambarkan keadaan tubuh atau tenaga seseorang yang kuat dan tangguh",
+"juma-juma": "sawah : Kata benda (nomina konkret) Menunjukkan tempat penanaman padi yang tergenang air, berbeda dari juma (ladang kering)",
+"jolou": "depan : Kata keterangan tempat (adverbia lokatif) Menunjukkan arah atau posisi di bagian muka, bukan benda/kerja/sifat tapi sering berfungsi sebagai pelengkap tempat",
+"jonggor": "kepala : Kata benda (nomina konkret) Bagian tubuh manusia atau hewan di bagian atas leher",
+"jagir": "mangisir : Kata kerja (verba)",
+"janjan": "bingkai, rangka : Kata benda (nomina konkret) Menunjukkan benda berbentuk kerangka atau batas luar suatu objek (seperti bingkai foto atau rumah)",
+"janjam": "gelap, suram : Kata sifat (adjektiva keadaan) Menggambarkan keadaan lingkungan yang tidak terang atau redup; bisa juga dipakai secara kiasan (rohana janjam = hatinya muram)",
+"jait": "jahit : kata Kerja (verba)",
+"jorbut": "Jorok : Kata sifat",
+"jambatan": "Jembatan : Kata benda (Nomina)",
+"jou": "Panggil : kata kerja (verba)",
+"jambar": "bagian, jatah, pemberian adat : Kata benda (nomina konkret-sosial) Istilah adat Batak untuk bagian atau jatah yang diterima seseorang dalam pesta",
+"jambak": "rambut di depan dahi / poni : Kata benda (nomina konkret) Bagian dari rambut yang tumbuh di bagian depan kepala",
+"jarit": "selendang / kain panjang : Kata benda (nomina konkret) Biasanya digunakan untuk membawa bayi atau dipakai sebagai kain adat",
+"jolmaon": "memanusiakan / memperlakukan dengan baik : Kata kerja (verba kausatif / membuat seseorang jadi manusiawi)",
+"jujung": "angkat di atas kepala : Kata kerja (verba aktif fisik) Menunjukkan tindakan mengangkat sesuatu ke atas kepala",
+"jumppa": "Bertemu : Kata kerja (Nomina)",
+"jagal": "daging : Kata benda (nomina), karena menyatakan bahan makanan", // ditambahkan
+  "jonok": "dekat : Kata sifat (adjektiva), karena menyatakan jarak atau keadaan", // ditambahkan
+  "jugul": "nakal / bandel : Kata sifat (adjektiva), karena menyatakan sifat atau perilaku", // ditambahkan
+  "jingar": "galak : Kata sifat (adjektiva), karena menyatakan sifat atau sikap", // ditambahkan
+  "jora": "kapok / jera : Kata sifat (adjektiva), karena menyatakan keadaan batin setelah mengalami sesuatu", // ditambahkan
+  "jambar": "hak / penghormatan : Kata benda (nomina), karena menyatakan konsep sosial atau adat", // ditambahkan
+  "jamita": "khotbah / ceramah : Kata benda (nomina), karena menyatakan bentuk tuturan atau kegiatan resmi", // ditambahkan
+  "jotjot": "sering / kerap : Kata keterangan / adverbia, karena menerangkan frekuensi suatu perbuatan", // ditambahkan
+
+// === HURUF K ===
+"kahanggi": "saudara semarga : Kata benda (nomina sosial-kekerabatan) Menunjukkan hubungan darah atau marga yang sama dalam adat Batak Toba",
+"kahula": "hula-hula / pihak keluarga istri : Kata benda (nomina sosial-adat) Pihak pemberi perempuan (mertua pihak laki-laki) dalam sistem kekerabatan Batak",
+"karejo": "bekerja : kata kerja (verba)",
+"kode": "warung / toko kecil : Kata benda (nomina konkret) Tempat menjual makanan atau barang kebutuhan",
+"kalilingi": "mengelilingi / memutari : Kata kerja (verba aktif) Tindakan berjalan mengitari sesuatu",
+"kirimhon": "mengirim / menyampaikan sesuatu : Kata kerja (verba aktif) Menunjukkan tindakan mengantarkan barang, surat, atau pesan",
+"kirihon": "menggeser ke kiri / memindahkan ke samping : Kata kerja (verba aktif lokatif) Tindakan memindahkan sesuatu ke sisi kiri",
+"kobas": "melempar / menjatuhkan benda : Kata kerja (verba aktif) Tindakan melempar sesuatu dengan tangan",
+"kobarhon": "menyalakan / membakar : Kata kerja (verba aktif kausatif) Tindakan membuat api menyala atau membakar sesuatu",
+"kombur": "obrol / bercerita : Kata kerja (verba sosial) Tindakan berbincang-bincang atau bercakap ringan",
+
+// === HURUF L ===
+"laho": "pergi / berangkat : Kata kerja (verba aktif) Menunjukkan tindakan meninggalkan tempat menuju tempat lain",
+"lahona": "kepergiannya : Kata benda (nomina hasil tindakan) Menunjukkan peristiwa atau keadaan seseorang yang sudah pergi",
+"lahoan": "tempat pergi / tujuan : Kata benda (nomina tempat) Menunjukkan arah atau tempat yang dituju",
+"laho ma": "pergilah : Kata kerja (verba perintah) Bentuk ajakan atau suruhan untuk berangkat",
+"lali": "lupa / lalai : Kata sifat (adjektiva mental) Menggambarkan keadaan pikiran yang melupakan sesuatu",
+"lambok": "lembut / halus / tenang : Kata sifat (adjektiva karakter) Menggambarkan sikap lembut hati atau tenang dalam bicara",
+"lambokhon": "melunakkan / menenangkan : Kata kerja (verba kausatif) Tindakan menjadikan sesuatu atau seseorang menjadi lembut dan tenang",
+"lambok ni roha": "kelembutan hati : Kata benda (nomina sifat batin) Nilai moral yang menunjukkan hati yang lembut dan penuh kasih",
+"langitna": "langitnya : Kata benda (nomina relasional) Bentuk kepemilikan dari langit",
+"lasak": "bandal : kata sifat (akjetifa)",
+"las ni roha": "keperihan hati / rasa sakit batin : Kata benda (nomina abstrak batin) Makna kiasan dari perasaan sedih yang mendalam",
+"lautna": "lautnya : Kata benda (nomina relasional) Bentuk kepemilikan dari laut",
+"lobu": "lembah / dataran rendah / daerah ladang : Kata benda (nomina alam / tempat) Menunjukkan daerah rendah di antara bukit atau gunung, sering menjadi tempat pemukiman",
+"lobi": "lorong / serambi / ruang depan rumah : Kata benda (nomina bangunan) Bagian depan rumah, tempat tamu duduk atau tempat beristirahat",
+"lomok": "lembek / lunak / tidak keras : Kata sifat (adjektiva fisik) Menunjukkan tekstur yang empuk atau tidak keras",
+"luhutan": "perkumpulan / persatuan / kelompok : Kata benda (nomina sosial) Hasil dari kegiatan luhut, berarti komunitas atau kelompok",
+"luhut ma hita": "bersatulah kita : Kalimat ajakan (verba sosial imperatif) Digunakan untuk ajakan gotong royong atau persaudaraan",
+"lumban ni roha": "kedamaian hati / ketenangan batin : Kata benda (nomina abstrak batin) Menggambarkan perasaan tenang, damai, dan tidak gelisah",
+"luahon": "mengeluarkan / menyingkirkan : Kata kerja (verba kausatif) Tindakan membuat sesuatu keluar atau menyingkirkan dari tempatnya",
+"luntur": "luntur / memudar : Kata sifat (adjektiva keadaan) Menunjukkan warna atau sifat yang perlahan hilang",
+
+// === HURUF M ===
+"molo": "kalau / jika : Kata tugas (konjungsi / penghubung) Digunakan untuk menghubungkan dua kalimat bersyarat",
+"mangan": "makan / memakan : Kata kerja (verba aktif) Menunjukkan tindakan makan atau menikmati makanan",
+"mangido": "meminta : Kata kerja (verba sosial) Tindakan memohon atau meminta sesuatu kepada orang lain",
+"mangula / mangolah": "bekerja; melakukan pekerjaan : Kata kerja (verba aktif ekonomi) Tindakan bekerja, biasanya dalam konteks bertani atau membuat sesuatu",
+"mangallang / allang": "makan : Kata kerja (verba sosial) Menunjukkan tindakan makan, sering dipakai dalam konteks bersama",
+"marharoan": "bergotong-royong / bekerja bersama : Kata kerja (verba sosial kolektif) Tindakan bekerja bersama-sama untuk tujuan bersama",
+"marroha": "seia-sekata / sehati : Kata sifat (adjektiva sosial) Menggambarkan hubungan batin atau kesepakatan hati antara orang-orang",
+"marhoras": "sehat / selamat : Kata sifat (adjektiva keadaan / ucapan adat) Menunjukkan keadaan tubuh dan hidup yang baik; juga digunakan sebagai sapaan adat Batak (“Horas!”)",
+"marboru": "pihak perempuan / boru : Kata benda (nomina sosial) Istilah adat untuk pihak keluarga perempuan dalam upacara adat",
+"martutur": "menyampaikan / berbicara dalam adat : Kata kerja (verba adat) Menunjukkan tindakan berbicara resmi dalam upacara adat",
+"marhite": "lewat / melalui : Kata kerja (verba arah / perantara) Tindakan melewati sesuatu atau lewat perantara",
+"marhombu": "menolong / memberi pertolongan : Kata kerja (verba sosial) Tindakan membantu orang lain dalam kesusahan",
+"mangihut": "mengikuti : Kata kerja (verba aktif sosial) Tindakan mengikuti seseorang, aturan, atau ajaran",
+"mangampu": "mampu / bisa; juga: menolong : Kata sifat (adjektiva kemampuan) bila bermakna “bisa”. Kata kerja (verba sosial) bila bermakna “menolong”",
+"mangaraja": "menjadi pemimpin / raja : Kata kerja (verba status / sosial) Menunjukkan tindakan atau keadaan menjadi pemimpin",
+"mangandung": "berisi / bernyanyi sedih : Kata kerja (verba emosional) Menunjukkan tindakan meratap atau bernyanyi sedih, biasanya dalam konteks duka cita",
+"mangulahon": "melakukan : Kata kerja (verba aktif) Tindakan mengerjakan sesuatu",
+"mangido pasu-pasu": "meminta berkat / memohon restu : Kata kerja (verba religius) Ungkapan adat dan doa untuk memohon berkat dari orang tua atau Tuhan",
+"mabiar": "menyebabkan / membuat : Kata kerja (verba kausatif) Tindakan membuat atau menyebabkan sesuatu terjadi",
+"marmasa": "menimbang / memikirkan : Kata kerja (verba mental) Menunjukkan tindakan mempertimbangkan atau merenungkan sesuatu",
+"mardomu": "berkumpul : Kata kerja (verba sosial) Tindakan berkumpul bersama dalam kegiatan sosial atau adat",
+"maruli": "mulia / terhormat : Kata sifat (adjektiva moral) Menggambarkan seseorang yang memiliki kehormatan dan budi luhur",
+"manok / manuk": "ayam : Kata benda (nomina hewan) Nama binatang unggas peliharaan",
+"mangandung": "meratap / menangis sedih : Kata kerja (verba emosional) Menunjukkan perbuatan meratap karena kehilangan atau kesedihan",
+"marhobas": "bekerja / beraktivitas / melakukan sesuatu : Kata kerja (verba aktif umum) Menunjukkan kegiatan bekerja atau melakukan suatu pekerjaan",
+"Paimahon": "menunggu : Verba karena menyatakan tindakan menanti sesuatu atau seseorang",
+"Mamente": "menunggu : Verba karena menunjukkan perbuatan menunggu dalam suatu keadaan",
+"Mangarantau": "merantau : Verba karena menggambarkan kegiatan pergi ke daerah lain untuk hidup atau bekerja",
+"Mardalani": "bertamasya : Verba karena menunjukkan aktivitas bepergian untuk bersenang-senang",
+"Markombur": "nongkrong : Verba karena menyatakan aktivitas berkumpul atau duduk santai bersama",
+"Martandang": "main ke rumah orang : Verba karena menunjukkan tindakan berkunjung ke rumah orang lain",
+"Manukkar": "menukar : Verba karena menyatakan perbuatan mengganti sesuatu dengan yang lain",
+"Mangalului": "mencari : Verba karena menunjukkan usaha menemukan sesuatu",
+"Manolsoli": "menyesali : Verba karena menyatakan tindakan batin berupa penyesalan",
+"Mamangke": "menggunakan : Verba karena menunjukkan perbuatan memakai atau memanfaatkan sesuatu",
+"Manulangi": "menyuapi : Verba karena menyatakan tindakan memberi makan ke mulut orang lain",
+"Mangusehon": "menumpahkan : Verba karena menunjukkan perbuatan menjatuhkan atau mengalirkan cairan",
+"Marsitijur": "meludah : Verba karena menyatakan tindakan mengeluarkan ludah dari mulut",
+"Mangalangka": "melangkah : Verba karena menunjukkan gerakan kaki saat berjalan",
+"Mangalompit": "melipat : Verba karena menyatakan perbuatan menekuk atau melipat sesuatu",
+"Manjomur": "menjemur : Verba karena menunjukkan kegiatan mengeringkan dengan panas matahari",
+"Mambalik": "membalik : Verba karena menyatakan tindakan mengubah posisi sisi suatu benda",
+"Manimpalhon": "melempar : Verba karena menunjukkan perbuatan melepaskan benda ke arah tertentu",
+"Tarantuk": "terantuk : Verba karena menyatakan peristiwa terbentur secara tidak sengaja",
+"Manggirgiri": "menggigil : Verba karena menunjukkan gerakan tubuh akibat dingin atau takut",
+"Marumpak": "roboh / tumbang : Verba karena menyatakan peristiwa jatuh atau runtuh",
+"Hehe": "bangkit : Verba karena menunjukkan tindakan berdiri atau bangun kembali",
+"Manetek": "menetes : Verba karena menyatakan peristiwa jatuhnya cairan sedikit demi sedikit",
+"Muba": "berubah : Verba karena menunjukkan proses menjadi berbeda dari keadaan semula",
+"Mangolu": "hidup : Verba karena menyatakan keadaan menjalani kehidupan atau bernyawa",
+"Mate": "mati : Verba karena menunjukkan keadaan berhentinya kehidupan",
+"Monding": "meninggal : Verba karena menunjukkan peristiwa wafat atau mati (lebih halus)",
+"Mabiar": "takut : Adjektiva karena menyatakan keadaan atau sifat perasaan seseorang",
+
+// === HURUF N ===
+"na": "yang (kata penentu) : Kata tugas (kata sandang / penentu) Digunakan untuk menghubungkan kata benda dan sifat, seperti “yang”",
+"nauli": "indah / baik : Kata sifat (adjektiva estetika) Menunjukkan keindahan, kebaikan, atau sesuatu yang menyenangkan",
+"natoras": "leluhur / nenek moyang : Kata benda (nomina kekerabatan / adat) Menunjukkan orang-orang tua dari generasi sebelumnya",
+"natipak": "tertinggal / ketinggalan : Kata sifat (adjektiva keadaan) Menunjukkan keadaan sesuatu yang tertinggal",
+"nang": "atau / maupun : Kata tugas (konjungsi) Digunakan untuk menghubungkan dua pilihan",
+"nampuna": "warisan / peninggalan : Kata benda (nomina adat / harta) Menunjukkan harta, tanah, atau peninggalan dari orang tua",
+"namboru": "saudara perempuan dari ayah (tante pihak ayah) : Kata benda (nomina kekerabatan) Panggilan untuk saudara perempuan dari pihak ayah",
+"nini": "nenek : Kata benda (nomina keluarga) Sebutan untuk ibu dari ayah atau ibu dari ibu",
+"nina": "berkata / berkata bahwa : Kata kerja (verba ucapan) Menunjukkan tindakan berbicara atau menyampaikan kata",
+"nampuna ni ruma": "pemilik rumah : Kata benda (nomina sosial) Ungkapan untuk menyebut orang yang memiliki rumah",
+"natorang": "terang / jelas : Kata sifat (adjektiva keadaan) Menunjukkan sesuatu yang terang, baik secara cahaya maupun makna",
+"natua tua": "orang tua / sepuh : Kata benda (nomina sosial / kekerabatan) Menunjukkan orang yang sudah lanjut usia atau dihormati",
+"nipuna": "punya / milik : Kata kerja (verba posesif) Menunjukkan kepemilikan atas sesuatu",
+"nanggar": "tempat duduk panjang / bangku : Kata benda (nomina benda konkret) Tempat duduk dari kayu panjang, sering dipakai di rumah adat",
+"nidok": "mengatakan / menyebut : Kata kerja (verba ucapan) Tindakan menyebut atau menyampaikan kata tertentu",
+"nida": "melihat / memandang : Kata kerja (verba penglihatan) Tindakan melihat atau memandang dengan mata",
+"natorus": "terus menerus : Kata sifat (adjektiva waktu / keadaan) Menunjukkan sesuatu yang dilakukan tanpa henti",
+"nangga": "tidak ada / belum : Kata tugas (negasi / penyangkalan) Menunjukkan ketiadaan atau belum terjadi",
+"nini roha": "pikiran / niat hati : Kata benda (nomina batin / abstrak) Ungkapan untuk menyebut isi hati atau pikiran seseorang",
+"naeng": "akan / hendak : Kata tugas (penanda waktu / masa depan) Menunjukkan sesuatu yang akan dilakukan",
+"nampuna": "punya / memiliki : Kata kerja (verba posesif) Menunjukkan tindakan memiliki sesuatu",
+"nangpe": "meskipun : Kata tugas (konjungsi penghubung kontras) Digunakan untuk menyatakan perbandingan atau pertentangan",
+"nungnga": "sudah / telah : Kata tugas (penanda waktu lampau) Menunjukkan bahwa suatu tindakan telah selesai dilakukan",
+"nihut": "mengikuti / turut : Kata kerja (verba sosial / aktif) Menunjukkan tindakan mengikuti seseorang atau sesuatu",
+"naeng do": "akan lah / hendaklah : Kata tugas (bentuk kalimat predikat) Biasanya digunakan untuk mempertegas keinginan atau rencana",
+
+// === HURUF O ===
+"ompu": "kakek / nenek / leluhur : Kata benda (nomina kekerabatan / adat) Sebutan hormat bagi orang yang sudah tua atau leluhur",
+"ojak": "menarik / menghela : Kata kerja (verba aktif fisik) Menunjukkan tindakan menarik sesuatu dengan tenaga",
+"olo": "mau / bersedia : Kata sifat (adjektiva kehendak / kemauan) Menunjukkan kesediaan atau kerelaan seseorang untuk melakukan sesuatu",
+"ompung": "nenek / kakek : Kata benda (nomina kekerabatan hormat) Sebutan umum untuk orang tua yang sudah lanjut usia, baik laki-laki maupun perempuan",
+"oroan": "menangis pelan / merintih : Kata kerja (verba emosional) Tindakan menangis dengan suara pelan, biasanya karena sedih mendalam",
+"ompunta": "leluhur kita : Kata benda (nomina kekerabatan jamak) Gabungan dari Ompu (leluhur) + -nta (kita), menunjukkan leluhur dari garis keturunan kita bersama",
+"oppung": "sebutan kakek untuk orang tua tua : Kata benda (nomina kekerabatan hormat tinggi) Bentuk yang lebih hormat dari Ompung, digunakan untuk memanggil orang tua yang sangat dituakan",
+"ompu-ompuna": "para leluhur / keturunan nenek moyang : Kata benda (nomina jamak / adat) Bentuk jamak dari Ompu, menunjukkan seluruh leluhur dan keturunannya",
+"olo do": "ya / baiklah (ungkapan setuju) : Kata sifat / ungkapan persetujuan Digunakan untuk menyatakan kesediaan atau persetujuan dalam percakapan",
+"ombus": "tiupan angin / embusan : Kata benda (nomina alam / fenomena) Menunjukkan hembusan atau tiupan udara",
+"orah": "ratapan / tangisan panjang : Kata benda (nomina emosional / adat) Tangisan panjang yang biasanya muncul dalam suasana duka cita atau upacara kematian",
+"oto": "bodoh : Kata sifat (adjektiva intelektual) Menggambarkan seseorang yang kurang pandai atau tidak cerdik",
+"ompung boru": "nenek dari pihak ibu : Kata benda (nomina kekerabatan khusus) Penyebutan nenek dari garis ibu",
+"ompung baoa": "kakek dari pihak ayah : Kata benda (nomina kekerabatan khusus) Penyebutan kakek dari garis ayah",
+"oro": "jerit / tangis keras : Kata benda (nomina suara / emosional) Tangisan keras atau jeritan karena duka atau rasa sakit",
+"on": "ini (kata tunjuk) : Kata tugas (kata penunjuk) Menunjukkan benda atau hal yang dekat dengan pembicara",
+"onma": "inilah / ini sekarang : Kata tugas (penunjuk kuat / penguat waktu sekarang) Bentuk penegasan dari on, sering dipakai untuk menandai momen sekarang",
+"ompung ni doli": "leluhur laki-laki : Kata benda (nomina kekerabatan / adat) Sebutan untuk leluhur dari garis ayah",
+"ompung ni boru": "leluhur perempuan : Kata benda (nomina kekerabatan / adat) Sebutan untuk leluhur dari garis ibu",
+"ojakon": "tariklah : Kata kerja (verba perintah) Bentuk perintah dari kata ojak, berarti menarik sesuatu",
+"obut": "rambut : Kata benda (nomina tubuh) Bagian tubuh berupa helaian halus di kepala",
+"opat": "empat : Kata benda (nomina bilangan / angka) Bilangan empat",
+"onan": "pasar : Kata benda (nomina tempat sosial) Tempat orang berdagang dan berinteraksi",
+
+// === HURUF P ===
+"poda": "nasihat : Kata benda (nomina moral / ajaran) Berarti pesan atau ajaran yang diberikan oleh orang tua kepada anak atau Masyarakat",
+"pangula": "petani : Kata benda (nomina pekerjaan / sosial) Orang yang bekerja di ladang atau sawah; pelaku dari kata kerja mangula (bekerja di ladang)",
+"parhobas": "pelayan / pekerja rumah tangga : Kata benda (nomina profesi sosial) Orang yang membantu pekerjaan, baik dalam rumah tangga atau adat",
+"pangalaho": "sifat / karakter : Kata benda (nomina abstrak / moral) Menunjukkan karakter, perilaku, atau cara seseorang berbuat",
+"pinarjolo": "pendahuluan / yang pertama dilakukan : Kata benda (nomina waktu / urutan) Menunjukkan bagian awal dari sesuatu atau yang terdahulu",
+"pangaranto": "perantau : Kata benda (nomina sosial / pekerjaan) Orang yang merantau atau mencari penghidupan di tempat lain",
+"pasu-pasu": "berkat / doa restu : Kata benda (nomina spiritual / adat) Doa atau restu yang diberikan oleh orang tua atau Tuhan",
+"pangisi": "pengisi / orang yang mengisi sesuatu : Kata benda (nomina pelaku / alat) Orang atau benda yang berfungsi mengisi atau melengkapi",
+"parbagasan": "tempat makan bersama : Kata benda (nomina tempat sosial / adat) Tempat di mana keluarga atau masyarakat makan bersama, biasanya dalam upacara adat",
+"parsaoran": "perkumpulan / tempat berkumpul : Kata benda (nomina sosial / adat) Tempat atau kelompok yang berfungsi sebagai wadah pertemuan masyarakat",
+"pangurason": "upacara pembersihan diri (ritual adat) : Kata benda (nomina adat / ritual) Ritual adat Batak untuk penyucian diri atau rumah dari hal-hal buruk",
+"pangaramoti": "penyembuh / dukun tradisional : Kata benda (nomina profesi tradisional) Orang yang menyembuhkan penyakit dengan cara adat atau doa tradisional",
+"parlindungan": "perlindungan / tempat berteduh : Kata benda (nomina abstrak / tempat) Bisa berarti tempat berlindung secara fisik atau perlindungan batin dari Tuhan",
+"parsahutaon": "persaudaraan satu kampung / perkampungan : Kata benda (nomina sosial / adat) Kehidupan bersama dalam satu kampung yang memiliki ikatan sosial dan adat",
+"pangitak": "pengamat / saksi : Kata benda (nomina pelaku / adat) Orang yang menjadi saksi dalam suatu peristiwa adat atau hukum",
+"parumaen": "menantu perempuan : Kata benda (nomina kekerabatan / adat) Sebutan untuk istri dari anak laki-laki dalam adat Batak",
+"parngoluon": "kehidupan : Kata benda (nomina abstrak / eksistensi) Menunjukkan makna hidup atau perjalanan kehidupan manusia",
+"pamatang": "pemisah / batas wilayah : Kata benda (nomina tempat / batas fisik) Menunjukkan batas antara dua daerah atau kampung",
+"parjalangan": "tempat perjalanan / rute : Kata benda (nomina tempat / arah) Menunjukkan jalan atau rute perjalanan",
+"parjolo": "yang terdahulu / yang pertama : Kata benda (nomina waktu / urutan) Menunjukkan hal atau orang yang lebih dahulu dari yang lain",
+"parsintak": "penyimpan / penjaga barang : Kata benda (nomina pelaku / fungsi) Orang yang menjaga atau menyimpan sesuatu agar aman",
+"pangido": "permintaan / doa permohonan : Kata benda (nomina spiritual / doa) Ungkapan permohonan, baik kepada Tuhan maupun sesama",
+"parngoluon": "kehidupan : Kata benda (nomina abstrak / eksistensi) Bentuk penegasan ulang dari nomor 17, bermakna sama: proses hidup manusia",
+
+// === HURUF R ===
+"roa": "jelek / buruk : Kata sifat (adjektiva kualitas) Menunjukkan keadaan yang tidak baik, lawan dari uli (baik)",
+"ronggur": "petir / kilat disertai suara guntur : Kata benda (nomina alam) Fenomena alam berupa suara menggelegar di langit",
+"rura": "lembah / dataran rendah di antara bukit : Kata benda (nomina alam / geografi) Tempat di antara dua bukit atau gunung, biasanya subur",
+"rias": "memperindah / menghias : Kata kerja (verba aktif) Tindakan menjadikan sesuatu lebih indah",
+"rap": "bersama / serempak : Kata tugas (kata keterangan kesertaan) Menunjukkan kebersamaan atau kegiatan dilakukan bersama",
+"rantos": "tabah / kuat hati : Kata sifat (adjektiva moral) Menggambarkan seseorang yang sabar dan kuat menghadapi cobaan",
+"ruru": "aliran air / sungai kecil : Kata benda (nomina alam) Air yang mengalir perlahan seperti parit kecil atau aliran sungai",
+"radot": "mengawasi / memperhatikan dengan cermat : Kata kerja (verba aktif pengamatan) Tindakan memperhatikan sesuatu dengan hati-hati",
+"rihut": "dingin / sejuk : Kata sifat (adjektiva suhu) Menunjukkan keadaan udara yang dingin",
+"rokkap": "jodoh / pasangan hidup : Kata benda (nomina sosial / pernikahan) Orang yang ditentukan menjadi pasangan hidup seseorang",
+"roham": "hatimu / perasaanmu : Kata benda (nomina batin / emosional) Bentuk kepemilikan dari roha (hati), berarti perasaan atau isi hati seseorang",
+"runding": "musyawarah / membicarakan sesuatu bersama : Kata kerja (verba sosial) Tindakan bermusyawarah untuk mengambil keputusan bersama",
+"rurai": "kacau / berantakan : Kata sifat (adjektiva keadaan) Menunjukkan sesuatu yang tidak teratur atau kacau",
+"riang": "ceria / gembira : Kata sifat (adjektiva emosional) Menunjukkan suasana hati yang bahagia dan penuh semangat",
+"rombus": "bau busuk / anyir : Kata sifat (adjektiva penciuman) Menunjukkan bau yang tidak sedap atau amis",
+"rundut": "mengikuti berurutan / mengikuti dari belakang : Kata kerja (verba aktif gerak) Menunjukkan tindakan mengikuti secara berurutan atau berbaris",
+"rupa": "wajah / bentuk : Kata benda (nomina fisik / penampilan) Menunjukkan bentuk, wajah, atau penampilan seseorang",
+"rimak": "teliti / hati-hati : Kata sifat (adjektiva karakter / kerja) Menggambarkan seseorang yang berhati-hati dan cermat",
+"rau": "daun : Kata benda (nomina alam / tumbuhan) Bagian dari tumbuhan yang berwarna hijau dan digunakan dalam berbagai keperluan adat",
+"rittik": "sangat kecil / seukuran noktah : Kata sifat (adjektiva ukuran) Menunjukkan sesuatu yang amat kecil",
+
+// === HURUF S ===
+"sada": "satu : Kata bilangan / numeralia",
+"sude": "semua / seluruh : Kata bilangan jamak / kuantor Menunjukkan keseluruhan jumlah",
+"sian": "dari : Kata depan / preposisi",
+"sai": "selalu / semoga / sungguh : Kata keterangan (adverbia penguatan) Memberi penegasan pada harapan atau kebiasaan",
+"somba": "hormat / sembah : Kata kerja (verba sosial) Menunjukkan tindakan menghormati seseorang, terutama orang tua atau hula-hula",
+"sahat": "sampai / tiba : Kata kerja (verba gerak) Menunjukkan tercapainya tujuan atau tempat",
+"suru-suru": "perintah / amanat : Kata benda (nomina abstrak) Berarti pesan atau amanat yang harus dijalankan",
+"solu": "perahu : Kata benda (nomina konkret) Alat transportasi di air, sering dipakai di Danau Toba",
+"suru": "menyuruh : Kata kerja (verba aktif) Tindakan memberi perintah kepada seseorang",
+"omba marhulahula": "hormati pihak hula-hula (ungkapan adat) : Frasa adat (verba sosial / moral) Makna adat penting: menghormati keluarga dari pihak istri, sebagai bentuk nilai luhur Batak",
+"sude halak": "semua orang : Frasa nominal (kata benda jamak) Gabungan kata sude (semua) + halak (orang)",
+"sombaon": "disembah / dihormati : Kata kerja pasif (verba) Bentuk pasif dari somba, berarti dihormati atau diagungkan",
+"sundut": "keturunan / garis keluarga : Kata benda (nomina sosial / silsilah) Menunjukkan urutan generasi dalam garis keturunan Batak",
+"sari matua": "orang tua yang anaknya sudah menikah semua : Kata benda (nomina adat / status sosial) Status adat tertinggi bagi orang tua dalam kehidupan Batak",
+"sangap": "hormat / penuh wibawa : Kata sifat (adjektiva moral / status) Menggambarkan seseorang yang berwibawa dan dihormati",
+"sira": "garam : Kata benda (nomina konkret) Bahan dapur, sering juga disebut dalam konteks simbolik (pemberi rasa kehidupan)",
+"siboru": "anak perempuan : Kata benda (nomina kekerabatan) Sebutan untuk anak perempuan, sangat penting dalam sistem kekerabatan Batak",
+"silang": "bersilang / menyilang : Kata kerja (verba gerak) Menunjukkan posisi atau tindakan menyeberang silang",
+"sipata": "kadang / sesekali : Kata keterangan (adverbia frekuensi) Menunjukkan kejadian yang tidak selalu terjadi",
+"simatua": "ibu mertua : Kata benda (nomina kekerabatan) Sebutan untuk ibu dari suami atau istri",
+"sirang": "pisah / cerai : Kata kerja (verba aktif sosial) Menunjukkan perpisahan antara dua orang atau pasangan",
+"sipanggaron": "banyak tingkah / suka usil : Kata sifat (adjektiva karakter) Menggambarkan seseorang yang cerewet atau suka mengganggu",
+"songot": "besok / esok hari : Kata keterangan waktu (adverbia) Menunjukkan waktu setelah hari ini",
+"sae": "selesai / berakhir : Kata kerja (verba hasil) Menunjukkan pekerjaan yang sudah tuntas",
+"sadalan": "jalan : Kata benda (nomina), karena menyatakan tempat atau sarana lewat", // ditambahkan
+  "sadeba": "sebelah : Kata keterangan / adverbia, karena menyatakan posisi", // ditambahkan
+  "salpu": "lupa : Kata kerja (verba), karena menyatakan keadaan atau proses mental", // ditambahkan
+  "sega": "rusak : Kata benda (nomina), karena menyatakan nama benda", // ditambahkan
+  "somba": "sembah / hormat : Kata kerja (verba), karena menyatakan tindakan menghormati", // ditambahkan
+  "songon": "seperti : Kata penghubung / konjungsi", // ditambahkan
+  "sude": "semua : Kata ganti tak tentu / pronomina", // ditambahkan
+  "sipangido": "permintaan : Kata benda (nomina), karena menyatakan hasil perbuatan meminta", // ditambahkan
+  "sisilon": "kuku : Kata benda (nomina), karena menyatakan sesuatu benda kuku", // ditambahkan
+  "sotung": "jangan : Kata kerja (verba), karena menyatakan tindakan jangan", // ditambahkan
+  "sae": "selesai : Kata kerja (verba), karena menyatakan selesai", // ditambahkan
+  "sahit": "sakit : Kata sifat (adjektiva), karena menyatakan keadaan tubuh", // ditambahkan
+  "sakkap": "rencana : Kata kerja (verba), karena menyatakan tindakan merencanakan", // ditambahkan
+  "sadia": "sedia / siap : Kata sifat (adjektiva), karena menyatakan keadaan kesiapan", // ditambahkan
+  "sahat": "sampai : Kata kerja (verba), karena menyatakan perbuatan mencapai tujuan", // ditambahkan
+  "sadihari": "sehari : Kata benda (nomina), karena menyatakan satuan waktu", // ditambahkan
+  "saba": "sawah : Kata benda (nomina), karena menyatakan tempat/lahan", // ditambahkan
+  "sabur": "tabur : Kata kerja (verba), karena menyatakan tindakan menaburkan", // ditambahkan
+// === HURUF T ===
+"tondi": "roh / jiwa : Kata benda (nomina), karena menyatakan sesuatu yang bersifat abstrak",
+"tuan": "Tuhan / orang terhormat : Kata benda (nomina religius / sosial) Sebutan untuk Tuhan atau tokoh yang dihormati",
+"tubu": "lahir / keturunan : Kata benda (nomina biologis / kekerabatan) Menunjukkan asal-usul atau kelahiran seseorang",
+"tulang": "paman (saudara laki-laki ibu) : Kata benda (nomina), karena menyatakan hubungan kekerabatan/orang",
+"tondi mardalan": "roh yang berjalan (jiwa gentayangan) : Frasa spiritual (nomina kiasan) Mengacu pada roh orang yang belum tenang setelah meninggal",
+"togu": "tahan / kuat : Kata sifat (adjektiva), karena menyatakan keadaan atau kemampuan",
+"tupa": "menerima berkat / terkena sesuatu : Kata kerja (verba spiritual / tindakan pasif) Tindakan menerima sesuatu, biasanya dalam konteks berkat atau takdir",
+"togu roha": "kuat hati / teguh pendirian : Frasa sifat (adjektiva emosional) Menggambarkan seseorang yang berani, sabar, dan pantang menyerah",
+"tutur": "nasihat / garis keturunan : Kata benda (nomina adat / moral) Bisa berarti \"ucapan bijak\" atau \"silsilah keluarga\"",
+"tupa hata": "menyampaikan pesan / mendengar kata : Kata kerja (verba sosial / komunikasi) Berarti menerima pesan atau berita",
+"tingki": "loncat / melompat : Kata kerja (verba gerak) Menunjukkan tindakan melompat atau meloncat",
+"tano": "tanah : Kata benda (nomina), karena menyatakan benda alam",
+"tarombo": "silsilah / garis marga : Kata benda (nomina sosial / adat) Pohon keluarga atau daftar keturunan dalam sistem marga Batak",
+"togu do hita": "kita kuat / tetap teguh : Frasa kalimat (ungkapan motivasi) Ucapan untuk memberi semangat dan solidaritas",
+"tarsurat": "tertulis : Kata sifat (adjektiva hasil / keadaan) Menunjukkan sesuatu yang sudah dicatat atau tertulis",
+"tarida": "terlihat / melihat : Kata kerja (verba penglihatan) Bisa berarti “melihat” (aktif) atau “terlihat” (pasif) tergantung konteks",
+"tarsongot": "terkejut / kaget : Kata sifat (adjektiva perasaan) Menunjukkan reaksi kaget atau heran",
+"tarsongon": "seperti / menyerupai : Kata penghubung (konjungsi perbandingan) Digunakan untuk menyatakan keserupaan",
+"taringot": "mengingat / mengetahui : Kata kerja (verba kognitif) Menunjukkan kemampuan mengingat atau sadar akan sesuatu",
+"tolu": "tiga : Kata bilangan / numeralia",
+"tarlupa": "lupa : Kata kerja (verba mental) Menunjukkan keadaan kehilangan ingatan sesaat",
+"tangis": "menangis : Kata kerja (verba emosional) Menunjukkan tindakan mengeluarkan air mata karena sedih",
+"tultul": "tetes / menetes : Kata kerja (verba), karena menyatakan proses atau perbuatan", // ditambahkan
+  "tiop": "tiup : Kata kerja (verba), karena menyatakan tindakan", // ditambahkan
+  "toho": "tunjuk / menunjukkan : Kata kerja (verba), karena menyatakan tindakan", // ditambahkan
+  "torop": "masuk ramai-ramai / berkerumun : Kata kerja (verba), karena menyatakan perbuatan", // ditambahkan
+  "tarsunggul": "terkenal / tersohor : Kata sifat (adjektiva), karena menyatakan keadaan atau sifat", // ditambahkan
+  "tarhirim": "terkirim : Kata kerja (verba), karena menyatakan suatu peristiwa atau tindakan", // ditambahkan
+  "tuak": "tuak (minuman tradisional) : Kata benda (nomina), karena menyatakan benda/minuman", // ditambahkan
+  "tarpaima": "diterima : Kata kerja (verba), karena menyatakan hasil suatu tindakan", // ditambahkan
+  "tupa": "sama / serupa : Kata sifat (adjektiva), karena menyatakan persamaan", // ditambahkan
+  "tarombo": "silsilah / garis keturunan : Kata benda (nomina), karena menyatakan hubungan keluarga", // ditambahkan
+
+// === HURUF U ===
+"ulos": "kain adat Batak : Kata benda (nomina), karena menyatakan benda budaya",
+"uhum": "hukum / peraturan adat : Kata benda (nomina sosial / hukum adat) Aturan atau norma dalam masyarakat Batak untuk menjaga tatanan hidup",
+"uju": "ujung / akhir : Kata benda (nomina tempat / batas) Menunjukkan bagian paling akhir dari sesuatu",
+"ulaon": "pekerjaan / tugas : Kata benda (nomina aktivitas / kerja) Segala bentuk kegiatan atau pekerjaan manusia",
+"uli": "cantik : Kata sifat (adjektiva), karena menyatakan kecantikan atau perasaan",
+"uju ni ari": "akhir hari / sore hari : Frasa keterangan waktu (adverbia) Ungkapan untuk waktu menjelang malam",
+"uju ni roha": "keputusan hati / akhir perasaan : Frasa emosional (nomina batin) Maknanya adalah hasil pertimbangan perasaan atau suara hati",
+"unang": "jangan / larangan : Kata larangan (kata tugas / interogatif) Digunakan untuk melarang seseorang melakukan sesuatu",
+"uju ni dolok": "puncak gunung : Frasa tempat (nomina alam) Menunjukkan bagian tertinggi dari gunung atau bukit",
+"urat": "urat / akar : Kata benda (nomina anatomi / tumbuhan) Menunjukkan bagian tubuh atau akar tanaman",
+"uning": "tahu / mengerti : Kata kerja (verba kognitif) Menunjukkan pemahaman terhadap sesuatu",
+"umpasa": "pantun / peribahasa Batak : Kata benda (nomina adat / sastra) Sastra tradisional Batak berupa pantun berirama yang mengandung nasihat",
+"uju ni jolo": "dulu / masa lampau : Frasa waktu (adverbia temporal) Menunjukkan masa yang telah berlalu",
+"uju-ujung": "paling ujung / tepi : Kata benda (nomina lokasi) Menunjukkan bagian paling luar atau tepi sesuatu",
+"ula": "perbuatan / tindakan : Kata benda (nomina abstrak / moral) Berarti perbuatan atau tindakan seseorang",
+"uban": "rambut putih : Kata benda (nomina biologis / ciri usia) Rambut yang memutih sebagai tanda tua",
+"ulok": "ular : Kata benda (nomina hewan) Hewan melata, juga kadang digunakan dalam ungkapan simbolik",
+"udut": "rokok : Kata benda (nomina benda konsumsi) Rokok, biasanya digunakan oleh orang dewasa dalam keseharian",
+"unduk": "tunduk / patuh : Kata kerja (verba sikap / moral) Tindakan menunjukkan kepatuhan atau hormat",
+"ulihon": "hibur / menghibur : Kata kerja (verba emosional) Memberi kenyamanan atau menenangkan perasaan seseorang",
+"ulu bolon": "sungai besar : Frasa alam (nomina geografi) Menunjukkan sungai besar atau aliran air utama",
+"udan": "hujan : Kata benda (nomina alam) Fenomena turunnya air dari langit",
+"ucok": "nama panggilan laki-laki : Kata benda (nomina), karena menyatakan nama orang", // ditambahkan
+  "uma": "sawah / ladang : Kata benda (nomina), karena menyatakan tempat/lahan", // ditambahkan
+  "unang": "jangan : Kata larangan / partikel", // ditambahkan
+  "ulok": "ular : Kata benda (nomina), karena menyatakan nama hewan", // ditambahkan
+  "udan": "hujan : Kata benda (nomina), karena menyatakan peristiwa alam", // ditambahkan
+"umpasa": "pantun / syair adat : Kata benda (nomina), karena menyatakan bentuk sastra lisan", // ditambahkan
+  "umpama": "perumpamaan misalnya : Kata penghubung konjungsi", // ditambahkan
+  "uban": "rambut putih : Kata benda (nomina), karena menyatakan bagian tubuh", // ditambahkan
+  "urat": "otot / urat : Kata benda (nomina), karena menyatakan bagian tubuh", // ditambahkan
+  "ulaon": "pekerjaan / kegiatan : Kata benda (nomina), karena menyatakan aktivitas atau perbuatan", // ditambahkan
+
+// === HURUF W ===
+"Waluh" : "Angkah delapan (8) : Kata nomina"
+  }
+};
+  </script>
+
+  <script>
+let currentLang = '';
+
+// === NAVIGASI ===
+function showDictionary(lang) {
+  currentLang = lang;
+  document.getElementById('languageSelection').style.display = 'none';
+  document.getElementById(`dictionary${capitalize(lang)}`).style.display = 'block';
+
+  document.getElementById(`search${capitalize(lang)}`).value = '';
+  document.getElementById(`searchResult${capitalize(lang)}`).innerHTML = '';
+
+  renderAlphabetFilter(lang);
+  setTimeout(() => filterWords(lang, ''), 0);
+}
+
+function goBack() {
+  document.querySelectorAll('.dictionary-page').forEach(el => el.style.display = 'none');
+  document.getElementById('languageSelection').style.display = 'block';
+}
+
+// === PENCARIAN ===
+function searchWord(lang) {
+  const query = document.getElementById(`search${capitalize(lang)}`).value.trim().toLowerCase();
+  const resultBox = document.getElementById(`searchResult${capitalize(lang)}`);
+  const dict = dictionaries[lang];
+
+  if (query === '') {
+    resultBox.innerHTML = '';
+    filterWords(lang, '');
+    return;
+  }
+
+  const matches = Object.entries(dict).filter(([batak, full]) =>
+    batak.toLowerCase().includes(query) || full.toLowerCase().includes(query)
+  );
+
+  if (matches.length > 0) {
+    resultBox.innerHTML = matches.map(([batak, full]) => {
+      const [arti, jenis] = full.split(' : ');
+      return `
+        <div class="search-result">
+          <strong style="color:var(--batak-red);">${capitalizeFirst(batak)}</strong> → 
+          <strong>${capitalizeFirst(arti)}</strong>
+          <em style="color:#666; margin-left:8px; font-size:0.9em;">(${capitalizeFirst(jenis || '')})</em>
+        </div>
+      `;
+    }).join('');
+  } else {
+    resultBox.innerHTML = `<div class="search-result" style="background:#ffebee; border-left-color:#c62828;">
+      Kata "<strong>${query}</strong>" tidak ditemukan.
+    </div>`;
+  }
+
+  document.getElementById(`wordList${capitalize(lang)}`).innerHTML = '';
+  document.querySelectorAll(`#alpha${capitalize(lang)} .alpha-btn`).forEach(b => b.classList.remove('active'));
+}
+
+// === RENDER CARD ===
+function renderWordCard(batak, full) {
+  const [arti, jenis] = full.split(' : ');
+  return `
+    <div class="word-card">
+      <div class="word-batak">${capitalizeFirst(batak)}</div>
+      <div class="word-meaning">→ ${capitalizeFirst(arti)}</div>
+      <div class="word-type">(${capitalizeFirst(jenis || '—')})</div>
+    </div>
+  `;
+}
+
+// === FILTER & RENDER ===
+function filterWords(lang, letter) {
+  const wordList = document.getElementById(`wordList${capitalize(lang)}`);
+  if (!wordList) return;
+
+  const dict = dictionaries[lang];
+  const words = Object.entries(dict);
+
+  const searchInput = document.getElementById(`search${capitalize(lang)}`).value.trim();
+  if (searchInput !== '') return;
+
+  let filtered = letter === ''
+    ? words
+    : words.filter(([batak]) => batak.toUpperCase().startsWith(letter));
+
+  filtered.sort((a, b) => a[0].localeCompare(b[0]));
+
+  document.querySelectorAll(`#alpha${capitalize(lang)} .alpha-btn`).forEach(btn => {
+    btn.classList.toggle('active',
+      (letter === '' && btn.textContent === 'SEMUA') ||
+      btn.textContent === letter
+    );
+  });
+
+  if (filtered.length === 0) {
+    wordList.innerHTML = `<div class="no-words">Tidak ada kata untuk huruf <strong>${letter || 'SEMUA'}</strong>.</div>`;
+    return;
+  }
+
+  wordList.innerHTML = filtered.map(([batak, full]) => renderWordCard(batak, full)).join('');
+}
+
+// === RENDER FILTER HURUF ===
+function renderAlphabetFilter(lang) {
+  const container = document.getElementById(`alpha${capitalize(lang)}`);
+  container.innerHTML = '';
+
+  const allBtn = document.createElement('button');
+  allBtn.className = 'alpha-btn active';
+  allBtn.textContent = 'SEMUA';
+  allBtn.onclick = () => {
+    document.getElementById(`search${capitalize(lang)}`).value = '';
+    document.getElementById(`searchResult${capitalize(lang)}`).innerHTML = '';
+    filterWords(lang, '');
+  };
+  container.appendChild(allBtn);
+
+  const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+  letters.forEach(letter => {
+    if (Object.keys(dictionaries[lang]).some(batak => batak.toUpperCase().startsWith(letter))) {
+      const btn = document.createElement('button');
+      btn.className = 'alpha-btn';
+      btn.textContent = letter;
+      btn.onclick = () => filterWords(lang, letter);
+      container.appendChild(btn);
+    }
+  });
+}
+
+// === UTILS ===
+function capitalize(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+function capitalizeFirst(str) {
+  if (!str) return '';
+  return str.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+}
+  </script>
+</body>
+</html>
